@@ -82,14 +82,19 @@ bool newton_raphson(std::function<double(double)> f,
 
     } else {
 
-        c = a;
-
-        while (std::abs(f(c)) > precision) {
+        for (int i = 0; std::abs(f(c)) > precision; i++) {
 
             c = c - f(c) / g(c);
 
+            if (a > c || c > b) {
+
+                return false;
+
+            }
+
         }
 
+        *root = c;
         return true;
     }
 }
@@ -104,9 +109,9 @@ bool secant(std::function<double(double)> f, double a, double b, double c, doubl
 
         while (std::abs(f(c)) > precision) {
 
-            c = b - ((a - b) / (f(a) - f(b))) * f(b);
+            c = b - ((b - a) / (f(b) - f(a))) * f(b);
             
-            a = b; // make sure to update a's value first before updating b, or you may end ip
+            a = b; // make sure to update a's value first before updating b, or you may end up
                    // dividing by zero
             b = c;
 
